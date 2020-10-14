@@ -1,6 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+const { interfaces } = require('mocha');
 const vscode = require('vscode');
+const path = require("path");
+const findFiles = require("./findFiles");
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -8,24 +11,61 @@ const vscode = require('vscode');
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "code-replacer-vscode-plugin" is now active!');
+function getInput({ placeHolder, validateInput }) {
+  return new Promise((resolve, reject) => {
+    vscode.window
+      .showInputBox({
+		placeHolder,
+		validateInput
+      })
+      .then((input) => {
+		resolve(input)
+      })
+  });
+}
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('code-replacer-vscode-plugin.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
+function validateTemplate(template) {
+	return template.includes('->')
+}
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from code-replacer-vscode-plugin!');
+function getQuickPick({ items, canPickMany, placeHolder }) {
+  return new Promise((resolve, reject) => {
+    vscode.window
+      .showQuickPick(items, {
+        canPickMany,
+        placeHolder,
+      })
+      .then((selection) => {
+        resolve(selection);
+      });
+  });
+}
+
+const activate = (context) => {
+	const disposable = vscode.commands.registerCommand('code-replacer-vscode-plugin.entry', async function () {
+		const workspaceName = vscode.workspace.name;
+		const workspacePath = vscode.workspace.rootPath;
+		const csvFiles = await findFiles({
+			dir: workspacePath,
+			ext: 'csv',
+		})
+		const selectedCSV = await getQuickPick({ items: csvFiles, placeHolder: "Select your csv file." });
+
+		const currentlyOpenTabfilePath = vscode.window.activeTextEditor.document.fileName;
+		const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath);
+
+		const flags = {
+			src: currentlyOpenTabfilePath,
+			csv: selectedCSV,
+		};
+		
+		flags.template = await getInput({ placeHolder: "Enter template or just enter if you dont need one." });
 	});
 
 	context.subscriptions.push(disposable);
 }
+
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
