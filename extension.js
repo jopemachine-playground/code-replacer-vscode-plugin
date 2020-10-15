@@ -58,9 +58,12 @@ const fetchLog = ({ jsonPath, keyName }) => {
 
   let displayCnt = 0
   const maxDisplayCnt = CLI_SELCTOR_MAX_DISPLAYING_LOG
-  for (const usageLogKey of Object.keys(usageLogJson)) {
-    usageLogJson[usageLogKey][keyName] && (displayCnt++ < maxDisplayCnt) &&
-    logs.push(usageLogJson[usageLogKey][keyName])
+  const keys = Object.keys(usageLogJson).reverse()
+  for (const usageLogKey of keys) {
+    if (usageLogJson[usageLogKey][keyName] && !logs.includes(usageLogJson[usageLogKey][keyName]) && (displayCnt < maxDisplayCnt)) {
+      logs.push(usageLogJson[usageLogKey][keyName])
+      displayCnt++
+    }
   }
 
   return logs
@@ -93,6 +96,7 @@ const activate = (context) => {
 
       const currentlyOpenTabfilePath =
         vscode.window.activeTextEditor.document.fileName;
+
       const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath);
 
       const flags = {
