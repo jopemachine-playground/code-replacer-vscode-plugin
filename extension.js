@@ -1,42 +1,16 @@
-const { interfaces } = require("mocha");
 const vscode = require("vscode");
 const path = require("path");
 const findFiles = require("./findFiles");
 const fs = require("fs");
-const { getProperties } = require("./util");
+const { getProperties, getInput, getQuickPick } = require("./util");
+const { CLI_SELCTOR_MAX_DISPLAYING_LOG, UI_String } = require("./constant");
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 
-function getInput({ placeHolder, validateInput }) {
-  return new Promise((resolve, reject) => {
-    vscode.window
-      .showInputBox({
-        placeHolder,
-        validateInput,
-      })
-      .then((input) => {
-        resolve(input);
-      });
-  });
-}
-
 function validateTemplate(template) {
   return template.includes("->");
-}
-
-function getQuickPick({ items, canPickMany, placeHolder }) {
-  return new Promise((resolve, reject) => {
-    vscode.window
-      .showQuickPick(items, {
-        canPickMany,
-        placeHolder,
-      })
-      .then((selection) => {
-        resolve(selection);
-      });
-  });
 }
 
 function handleBooleanFlags () {
@@ -59,6 +33,37 @@ function handleBooleanFlags () {
         resolve(selection);
       });
   });
+}
+
+async function handleTemplate ({ usageLogPath }) {
+  const usageLogs = fetchLog({ jsonPath: usageLogPath, keyName: 'template' });
+  const uiButtons = [
+    ...usageLogs,
+    UI_String.TYPE_INPUT,
+  ];
+  const template = await getQuickPick({ items: uiButtons, placeHolder: 'Check template to apply' })
+
+  if (template === UI_String.TYPE_INPUT) {
+    return await getInput({
+      placeHolder: "Enter template",
+    });
+  } else {
+    return template;
+  }
+}
+
+const fetchLog = ({ jsonPath, keyName }) => {
+  const logs = []
+  const usageLogJson = require(jsonPath)
+
+  let displayCnt = 0
+  const maxDisplayCnt = CLI_SELCTOR_MAX_DISPLAYING_LOG
+  for (const usageLogKey of Object.keys(usageLogJson)) {
+    usageLogJson[usageLogKey][keyName] && (displayCnt++ < maxDisplayCnt) &&
+    logs.push(usageLogJson[usageLogKey][keyName])
+  }
+
+  return logs
 }
 
 const activate = (context) => {
@@ -95,9 +100,7 @@ const activate = (context) => {
         csv: selectedCSV,
       };
 
-      flags.template = await getInput({
-        placeHolder: "Enter template or just enter if you dont need one.",
-      });
+      flags.template = await handleTemplate({ usageLogPath });
 
       const booleanFlags = await handleBooleanFlags();
       for (const booleanFlag of booleanFlags.values()) {
