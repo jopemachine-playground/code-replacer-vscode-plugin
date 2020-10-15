@@ -1,14 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const { interfaces } = require("mocha");
 const vscode = require("vscode");
 const path = require("path");
 const findFiles = require("./findFiles");
 const fs = require("fs");
 const { getProperties } = require("./util");
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -44,6 +39,28 @@ function getQuickPick({ items, canPickMany, placeHolder }) {
   });
 }
 
+function handleBooleanFlags () {
+  const flagItems = [
+    'debug',
+    'verbose',
+    'conf',
+    'once',
+    'no-escape',
+    'overwrite'
+  ];
+
+  return new Promise((resolve, reject) => {
+    vscode.window
+      .showQuickPick(flagItems, {
+        canPickMany: true,
+        placeHolder: 'Check the flags to apply',
+      })
+      .then((selection) => {
+        resolve(selection);
+      });
+  });
+}
+
 const activate = (context) => {
   const disposable = vscode.commands.registerCommand(
     "code-replacer-vscode-plugin.entry",
@@ -52,7 +69,7 @@ const activate = (context) => {
         path.sep
       }${"code-replacer"}`;
       const binPath = path.resolve(
-        `${codeReplacerPath}${path.sep}${"cliEntry.js"}`
+        `${codeReplacerPath}${path.sep}${"index.js"}`
       );
       const envPath = path.resolve(`${codeReplacerPath}${path.sep}${".env"}`);
       const usageLogPath = path.resolve(
@@ -76,12 +93,16 @@ const activate = (context) => {
       const flags = {
         src: currentlyOpenTabfilePath,
         csv: selectedCSV,
-        conf: true,
       };
 
       flags.template = await getInput({
         placeHolder: "Enter template or just enter if you dont need one.",
       });
+
+      const booleanFlags = await handleBooleanFlags();
+      for (const booleanFlag of booleanFlags.values()) {
+        flags[booleanFlag] = true;
+      }
 
       const terminal = vscode.window.activeTerminal
         ? vscode.window.activeTerminal
@@ -89,13 +110,17 @@ const activate = (context) => {
       terminal.show();
 
       let command = `node ${binPath}`;
-	  
-	  fs.writeFile(envPath, getProperties(flags), {
-        encoding: "utf8",
-	  }, () => {
-		terminal.sendText(command);
-	  })
 
+      fs.writeFile(
+        envPath,
+        getProperties(flags),
+        {
+          encoding: "utf8",
+        },
+        () => {
+          terminal.sendText(command);
+        }
+      );
     }
   );
 
