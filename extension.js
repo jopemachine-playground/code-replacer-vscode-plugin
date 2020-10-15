@@ -1,9 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const { interfaces } = require('mocha');
-const vscode = require('vscode');
+const { interfaces } = require("mocha");
+const vscode = require("vscode");
 const path = require("path");
 const findFiles = require("./findFiles");
+const fs = require("fs");
+const { getProperties } = require("./util");
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -16,17 +18,17 @@ function getInput({ placeHolder, validateInput }) {
   return new Promise((resolve, reject) => {
     vscode.window
       .showInputBox({
-		placeHolder,
-		validateInput
+        placeHolder,
+        validateInput,
       })
       .then((input) => {
-		resolve(input)
-      })
+        resolve(input);
+      });
   });
 }
 
 function validateTemplate(template) {
-	return template.includes('->')
+  return template.includes("->");
 }
 
 function getQuickPick({ items, canPickMany, placeHolder }) {
@@ -43,28 +45,62 @@ function getQuickPick({ items, canPickMany, placeHolder }) {
 }
 
 const activate = (context) => {
-	const disposable = vscode.commands.registerCommand('code-replacer-vscode-plugin.entry', async function () {
-		const workspaceName = vscode.workspace.name;
-		const workspacePath = vscode.workspace.rootPath;
-		const csvFiles = await findFiles({
-			dir: workspacePath,
-			ext: 'csv',
-		})
-		const selectedCSV = await getQuickPick({ items: csvFiles, placeHolder: "Select your csv file." });
+  const disposable = vscode.commands.registerCommand(
+    "code-replacer-vscode-plugin.entry",
+    async function () {
+      const codeReplacerPath = `${__dirname}${path.sep}${"node_modules"}${
+        path.sep
+      }${"code-replacer"}`;
+      const binPath = path.resolve(
+        `${codeReplacerPath}${path.sep}${"cliEntry.js"}`
+      );
+      const envPath = path.resolve(`${codeReplacerPath}${path.sep}${".env"}`);
+      const usageLogPath = path.resolve(
+        `${codeReplacerPath}${path.sep}${"usageLog.json"}`
+      );
+      const workspaceName = vscode.workspace.name;
+      const workspacePath = vscode.workspace.rootPath;
+      const csvFiles = await findFiles({
+        dir: workspacePath,
+        ext: "csv",
+      });
+      const selectedCSV = await getQuickPick({
+        items: csvFiles,
+        placeHolder: "Select your csv file.",
+      });
 
-		const currentlyOpenTabfilePath = vscode.window.activeTextEditor.document.fileName;
-		const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath);
+      const currentlyOpenTabfilePath =
+        vscode.window.activeTextEditor.document.fileName;
+      const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath);
 
-		const flags = {
-			src: currentlyOpenTabfilePath,
-			csv: selectedCSV,
-		};
-		
-		flags.template = await getInput({ placeHolder: "Enter template or just enter if you dont need one." });
-	});
+      const flags = {
+        src: currentlyOpenTabfilePath,
+        csv: selectedCSV,
+        conf: true,
+      };
 
-	context.subscriptions.push(disposable);
-}
+      flags.template = await getInput({
+        placeHolder: "Enter template or just enter if you dont need one.",
+      });
+
+      const terminal = vscode.window.activeTerminal
+        ? vscode.window.activeTerminal
+        : vscode.window.createTerminal();
+      terminal.show();
+
+      let command = `node ${binPath}`;
+	  
+	  fs.writeFile(envPath, getProperties(flags), {
+        encoding: "utf8",
+	  }, () => {
+		terminal.sendText(command);
+	  })
+
+    }
+  );
+
+  context.subscriptions.push(disposable);
+};
 
 exports.activate = activate;
 
@@ -72,6 +108,6 @@ exports.activate = activate;
 function deactivate() {}
 
 module.exports = {
-	activate,
-	deactivate
-}
+  activate,
+  deactivate,
+};
