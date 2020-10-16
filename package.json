@@ -2,9 +2,13 @@
 	"name": "code-replacer-vscode-plugin",
 	"displayName": "code-replacer-vscode-plugin",
 	"description": "vscode plugin for code-replacer",
+	"publisher": "code-replacer-vscode-plugin",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.50.0"
+	},
+	"repository": {
+		"url": "https://github.com/jopemachine/code-replacer-vscode-plugin"
 	},
 	"categories": [
 		"Other"
