@@ -73,15 +73,15 @@ const activate = (context) => {
   const disposable = vscode.commands.registerCommand(
     "code-replacer-vscode-plugin.entry",
     async function () {
-      const codeReplacerPath = `${__dirname}${path.sep}${"node_modules"}${
+      const codeReplacerPath = `${__dirname}${path.sep}node_modules${
         path.sep
-      }${"code-replacer"}`;
+      }code-replacer${path.sep}dist`;
       const binPath = path.resolve(
-        `${codeReplacerPath}${path.sep}${"index.js"}`
+        `${codeReplacerPath}${path.sep}src${path.sep}index.js`
       );
-      const envPath = path.resolve(`${codeReplacerPath}${path.sep}${".env"}`);
+      const envPath = path.resolve(`${codeReplacerPath}${path.sep}src${path.sep}${".env"}`);
       const usageLogPath = path.resolve(
-        `${codeReplacerPath}${path.sep}${"usageLog.json"}`
+        `${codeReplacerPath}${path.sep}src${path.sep}usageLog.json`
       );
       const workspaceName = vscode.workspace.name;
       const workspacePath = vscode.workspace.rootPath;
