@@ -20,7 +20,10 @@ function handleBooleanFlags () {
     'conf',
     'once',
     'no-escape',
-    'overwrite'
+    'overwrite',
+    'excludeReg',
+    'startLine',
+    'endLine',
   ];
 
   return new Promise((resolve, reject) => {
@@ -73,15 +76,25 @@ const activate = (context) => {
   const disposable = vscode.commands.registerCommand(
     "code-replacer-vscode-plugin.entry",
     async function () {
+      if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
+        vscode.window.showErrorMessage("Jobs canceled. open the source file first.");
+        return;
+      }
+
+      const currentlyOpenTabfilePath =
+        vscode.window.activeTextEditor.document.fileName;
+
+      const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath);
+
       const codeReplacerPath = `${__dirname}${path.sep}node_modules${
         path.sep
       }code-replacer${path.sep}dist`;
       const binPath = path.resolve(
-        `${codeReplacerPath}${path.sep}src${path.sep}index.js`
+        `${codeReplacerPath}${path.sep}index.js`
       );
-      const envPath = path.resolve(`${codeReplacerPath}${path.sep}src${path.sep}${".env"}`);
+      const envPath = path.resolve(`${codeReplacerPath}${path.sep}${".env"}`);
       const usageLogPath = path.resolve(
-        `${codeReplacerPath}${path.sep}src${path.sep}usageLog.json`
+        `${codeReplacerPath}${path.sep}usageLog.json`
       );
       const workspaceName = vscode.workspace.name;
       const workspacePath = vscode.workspace.rootPath;
@@ -91,13 +104,10 @@ const activate = (context) => {
       });
       const selectedCSV = await getQuickPick({
         items: csvFiles,
-        placeHolder: "Select your csv file.",
+        placeHolder: "Select your csv file or type esc to pass csv option",
       });
 
-      const currentlyOpenTabfilePath =
-        vscode.window.activeTextEditor.document.fileName;
-
-      const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath);
+      vscode.window.showInformationMessage("csv option is passed.");
 
       const flags = {
         src: currentlyOpenTabfilePath,
@@ -106,9 +116,30 @@ const activate = (context) => {
 
       flags.template = await handleTemplate({ usageLogPath });
 
+      if (!flags.template) {
+        vscode.window.showErrorMessage("Jobs canceled. template value is required argument.");
+        return;
+      } else if (!validateTemplate(flags.template)) {
+        vscode.window.showErrorMessage("Wrong template value. See README.md");
+        return;
+      }
+
       const booleanFlags = await handleBooleanFlags();
+
       for (const booleanFlag of booleanFlags.values()) {
         flags[booleanFlag] = true;
+      }
+
+      if (flags['excludeReg']) {
+        flags['excludeReg'] = await getInput({ placeHolder: "Enter excludeReg" });
+      }
+
+      if (flags['startLine']) {
+        flags['startLine'] = await getInput({ placeHolder: "Enter startLine" });
+      }
+
+      if (flags['endLine']) {
+        flags['endLine'] = await getInput({ placeHolder: "Enter endLine" });
       }
 
       const terminal = vscode.window.activeTerminal

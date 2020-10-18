@@ -11,6 +11,7 @@ module.exports = {
     }
     return result;
   },
+
   getInput({ placeHolder, validateInput }) {
     return new Promise((resolve, reject) => {
       vscode.window
