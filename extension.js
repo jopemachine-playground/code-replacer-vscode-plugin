@@ -3,7 +3,11 @@ const path = require("path");
 const findFiles = require("./findFiles");
 const fs = require("fs");
 const { getProperties, getInput, getQuickPick } = require("./util");
-const { CLI_SELCTOR_MAX_DISPLAYING_LOG, UI_String } = require("./constant");
+const { UI_String } = require("./constant");
+
+// fetch setting value from vscode's settings
+// See package.json's contributes's configuration
+const maxLogDisplayCnt = vscode.workspace.getConfiguration().get('code.replacer.setting');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -60,7 +64,8 @@ const fetchLog = ({ jsonPath, keyName }) => {
   const usageLogJson = require(jsonPath)
 
   let displayCnt = 0
-  const maxDisplayCnt = CLI_SELCTOR_MAX_DISPLAYING_LOG
+  const maxDisplayCnt = maxLogDisplayCnt
+  console.log(maxLogDisplayCnt)
   const keys = Object.keys(usageLogJson).reverse()
   for (const usageLogKey of keys) {
     if (usageLogJson[usageLogKey][keyName] && !logs.includes(usageLogJson[usageLogKey][keyName]) && (displayCnt < maxDisplayCnt)) {

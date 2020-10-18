@@ -14,6 +14,10 @@
 	"categories": [
 		"Other"
 	],
+	"keywords": [
+		"vscode-plugin",
+		"cope-replacing"
+	],
 	"activationEvents": [
 		"onCommand:code-replacer-vscode-plugin.entry"
 	],
@@ -22,9 +26,21 @@
 		"commands": [
 			{
 				"command": "code-replacer-vscode-plugin.entry",
-				"title": "rp"
+				"title": "rp",
+				"icon": "image/rp.svg",
+				"category": "code-replacer entry point"
 			}
-		]
+		],
+		"configuration": {
+			"title": "codeReplacerSetting",
+			"properties": {
+				"code.replacer.setting": {
+					"type": "integer",
+					"default": 5,
+					"description": "Please specify up to how many logs you want to display."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"lint": "eslint .",
