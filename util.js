@@ -1,40 +1,43 @@
-const fs = require("fs");
-const path = require("path");
-const vscode = require("vscode");
+// const fs = require('fs')
+// const path = require('path')
+const vscode = require('vscode')
 
 module.exports = {
   getProperties: function (object) {
-    let result = "";
+    let result = ''
     for (const key of Object.keys(object)) {
       result += `${key}=${object[key]}
-`;
+`
     }
-    return result;
+    return result
   },
 
-  getInput({ placeHolder, validateInput }) {
+  getInput ({ placeHolder, validateInput, prompt }) {
     return new Promise((resolve, reject) => {
       vscode.window
         .showInputBox({
           placeHolder,
           validateInput,
+          ignoreFocusOut: true,
+          prompt: true
         })
         .then((input) => {
-          resolve(input);
-        });
-    });
+          resolve(input)
+        })
+    })
   },
 
-  getQuickPick({ items, canPickMany, placeHolder }) {
+  getQuickPick ({ items, canPickMany, placeHolder }) {
     return new Promise((resolve, reject) => {
       vscode.window
         .showQuickPick(items, {
           canPickMany,
           placeHolder,
+          ignoreFocusOut: true
         })
         .then((selection) => {
-          resolve(selection);
-        });
-    });
-  },
-};
+          resolve(selection)
+        })
+    })
+  }
+}

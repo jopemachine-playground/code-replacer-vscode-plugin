@@ -1,22 +1,22 @@
-const path = require("path");
-const recursive = require("recursive-readdir");
+const path = require('path')
+const recursive = require('recursive-readdir')
 
 module.exports = async function ({ dir, ext }) {
   return new Promise((resolve, reject) => {
     try {
       recursive(path.resolve(dir), [], async (_err, files) => {
-        const resultFiles = [];
+        const resultFiles = []
         files.map((filePath) => {
-          const targetFileName = filePath.split(path.sep).reverse()[0];
-          if (targetFileName.split(".")[1] === ext) {
-            resultFiles.push(filePath);
+          const targetFileName = filePath.split(path.sep).reverse()[0]
+          if (targetFileName.split('.')[1] === ext) {
+            resultFiles.push(filePath)
           }
-        });
+        })
 
-        resolve(resultFiles);
-      });
+        resolve(resultFiles)
+      })
     } catch (e) {
-      reject(e);
+      reject(e)
     }
-  });
-};
+  })
+}

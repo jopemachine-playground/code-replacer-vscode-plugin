@@ -1,5 +1,6 @@
 module.exports = {
-  UI_String: {
-    TYPE_INPUT: 'Type input.',
-  },
+  UIString: {
+    TYPE_INPUT: '[*] Type input.',
+    EXIT: '[*] Exit the extension.'
+  }
 }
