@@ -6,6 +6,11 @@ Replace codes line by line with regex for target files
 
 <img src="./image/demo.gif" />
 
+## How to install
+
+Search vscode plugin's market place.
+
+Or download and import vsix file.
 
 ## Related Repository
 
