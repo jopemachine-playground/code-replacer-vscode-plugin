@@ -20,7 +20,7 @@ function validateTemplate (template) {
 
 function handleBooleanFlags () {
   const flagItems = [
-    'debug',
+    'print',
     'verbose',
     'conf',
     'once',

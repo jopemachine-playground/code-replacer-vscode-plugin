@@ -27,7 +27,6 @@
 			{
 				"command": "code-replacer-vscode-plugin.entry",
 				"title": "rp",
-				"icon": "image/rp.svg",
 				"category": "Code-replacer"
 			}
 		],
@@ -54,7 +53,7 @@
 		"@types/mocha": "^8.0.0",
 		"@types/node": "^12.11.7",
 		"@types/vscode": "^1.50.0",
-		"code-replacer": "0.0.207",
+		"code-replacer": "0.0.210",
 		"eslint": "^7.11.0",
 		"eslint-config-standard": "^14.1.1",
 		"eslint-plugin-import": "^2.22.1",
