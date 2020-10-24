@@ -1,6 +1,6 @@
 {
-	"name": "code-replacer-vscode-plugin",
-	"displayName": "code-replacer-vscode-plugin",
+	"name": "code-replacer",
+	"displayName": "Code replacer",
 	"description": "Replace codes line by line with regex for target files",
 	"author": "jopemachine",
 	"publisher": "jopemachine",
@@ -20,21 +20,28 @@
 		"cope-replacing"
 	],
 	"activationEvents": [
-		"onCommand:code-replacer-vscode-plugin.entry"
+		"onCommand:Code-replacer.entry"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "code-replacer-vscode-plugin.entry",
-				"title": "rp",
+				"command": "Code-replacer.entry",
+				"title": "Replace the currently opened document.",
 				"category": "Code-replacer"
 			}
 		],
+		"keybindings": [
+			{
+                "command": "Code-replacer.entry",
+                "key": "ctrl+alt+r",
+                "mac": "ctrl+cmd+r"
+            }
+		],
 		"configuration": {
-			"title": "codeReplacerSetting",
+			"title": "maxLogDisplayCnt",
 			"properties": {
-				"code.replacer.setting": {
+				"Code-replacer.maxLogDisplayCnt": {
 					"type": "integer",
 					"default": 5,
 					"description": "Please specify up to how many logs you want to display."
@@ -67,6 +74,6 @@
 	},
 	"dependencies": {
 		"recursive-readdir": "^2.2.2",
-		"code-replacer": "0.0.210"
+		"code-replacer": "0.0.212"
 	}
 }

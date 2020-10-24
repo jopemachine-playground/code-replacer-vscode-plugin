@@ -5,10 +5,9 @@ const findFiles = require('./findFiles')
 const fs = require('fs')
 const { getProperties, getInput, getQuickPick } = require('./util')
 const { UIString } = require('./constant')
-
 // fetch setting value from vscode's settings
 // See package.json's contributes's configuration
-const maxLogDisplayCnt = vscode.workspace.getConfiguration().get('code.replacer.setting')
+const maxLogDisplayCnt = vscode.workspace.getConfiguration().get('Code-replacer.maxLogDisplayCnt')
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -92,7 +91,7 @@ const fetchLog = ({ jsonPath, keyName }) => {
 
 const activate = (context) => {
   const disposable = vscode.commands.registerCommand(
-    'code-replacer-vscode-plugin.entry',
+    'Code-replacer.entry',
     async function () {
       if (
         !vscode.window.activeTextEditor ||
@@ -106,14 +105,13 @@ const activate = (context) => {
 
       const currentlyOpenTabfilePath =
         vscode.window.activeTextEditor.document.fileName
-
       const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath)
-
-      const codeReplacerPath = `${__dirname}${path.sep}node_modules${path.sep}code-replacer${path.sep}dist`
-      const binPath = path.resolve(`${codeReplacerPath}${path.sep}index.js`)
-      const envPath = path.resolve(`${codeReplacerPath}${path.sep}${'.env'}`)
+      const pathSep = process.platform === 'win32' ? `${path.sep}${path.sep}` : `${path.sep}`
+      const codeReplacerPath = `${__dirname}${pathSep}node_modules${pathSep}code-replacer${pathSep}dist`
+      const binPath = path.resolve(`${codeReplacerPath}${pathSep}index.js`)
+      const envPath = path.resolve(`${codeReplacerPath}${pathSep}${'.env'}`)
       const usageLogPath = path.resolve(
-        `${codeReplacerPath}${path.sep}usageLog.json`
+        `${codeReplacerPath}${pathSep}usageLog.json`
       )
       const workspaceName = vscode.workspace.name
       const workspacePath = vscode.workspace.rootPath
@@ -121,7 +119,6 @@ const activate = (context) => {
         dir: workspacePath,
         ext: 'csv'
       })
-
       const selectedCSV = await getQuickPick({
         items: [UIString.EXIT, ...csvFiles],
         placeHolder: 'Select your csv file or type esc to pass csv option.'
