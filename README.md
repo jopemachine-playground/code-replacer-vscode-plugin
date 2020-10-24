@@ -18,9 +18,9 @@ Or download and import vsix file.
 
 ## How to use
 
-1. Activate the plugin by command. Activating commands are as follows.
+1. Activate the plugin using below methods.
 
-### keyboard shortcut
+### 1 - keyboard shortcut
 
 **(windows) <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>**
 
@@ -28,7 +28,7 @@ Or download and import vsix file.
 
 <img src="./image/ctrlshiftp.png" />
 
-### Using <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
+### 2 - Using <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
 
 Select replace tab.
 
