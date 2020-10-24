@@ -23,6 +23,7 @@ Or download and import vsix file.
 ### keyboard shortcut
 
 **(windows) <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>R</kbd>**
+
 **(macos) <kbd>Ctrl</kbd> + <kbd>Command</kbd> + <kbd>R</kbd>**
 
 <img src="./image/ctrlshiftp.png" />
