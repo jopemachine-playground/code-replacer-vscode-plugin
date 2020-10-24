@@ -3,7 +3,7 @@ const vscode = require('vscode')
 const path = require('path')
 const findFiles = require('./findFiles')
 const fs = require('fs')
-const { getProperties, getInput, getQuickPick } = require('./util')
+const { getProperties, getInput, getQuickPick, replaceAll } = require('./util')
 const { UIString } = require('./constant')
 // fetch setting value from vscode's settings
 // See package.json's contributes's configuration
@@ -106,13 +106,16 @@ const activate = (context) => {
       const currentlyOpenTabfilePath =
         vscode.window.activeTextEditor.document.fileName
       const currentlyOpenTabfileName = path.basename(currentlyOpenTabfilePath)
-      const pathSep = process.platform === 'win32' ? `${path.sep}${path.sep}` : `${path.sep}`
-      const codeReplacerPath = `${__dirname}${pathSep}node_modules${pathSep}code-replacer${pathSep}dist`
-      const binPath = path.resolve(`${codeReplacerPath}${pathSep}index.js`)
-      const envPath = path.resolve(`${codeReplacerPath}${pathSep}${'.env'}`)
-      const usageLogPath = path.resolve(
-        `${codeReplacerPath}${pathSep}usageLog.json`
-      )
+      const pathSep =
+        process.platform === 'win32' ? path.sep + path.sep : path.sep
+      const dirName =
+        process.platform === 'win32'
+          ? replaceAll(__dirname, '\\', '\\\\')
+          : __dirname
+      const codeReplacerPath = `${dirName}${pathSep}node_modules${pathSep}code-replacer${pathSep}dist`
+      const binPath = `${codeReplacerPath}${pathSep}index.js`
+      const envPath = `${codeReplacerPath}${pathSep}${'.env'}`
+      const usageLogPath = `${codeReplacerPath}${pathSep}usageLog.json`
       const workspaceName = vscode.workspace.name
       const workspacePath = vscode.workspace.rootPath
       const csvFiles = await findFiles({

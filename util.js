@@ -39,5 +39,9 @@ module.exports = {
           resolve(selection)
         })
     })
+  },
+
+  replaceAll (str, searchStr, replaceStr) {
+    return str.split(searchStr).join(replaceStr)
   }
 }
