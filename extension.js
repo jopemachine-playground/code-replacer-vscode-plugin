@@ -58,7 +58,10 @@ async function handleTemplate ({ usageLogPath }) {
     return await getInput({
       placeHolder: 'Enter template.',
       validateInput: (str) => {
-        return !validateTemplate(str)
+        if (validateTemplate(str)) {
+          return null
+        }
+        return 'Check template form to apply.'
       }
     })
   } else if (template === UIString.EXIT) {
@@ -155,6 +158,11 @@ const activate = (context) => {
       }
 
       const booleanFlags = await handleBooleanFlags()
+
+      if (!booleanFlags) {
+        vscode.window.showInformationMessage(UIString.EXIT)
+        return
+      }
 
       for (const booleanFlag of booleanFlags.values()) {
         flags[booleanFlag] = true
