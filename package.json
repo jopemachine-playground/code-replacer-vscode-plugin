@@ -4,7 +4,7 @@
 	"description": "Replace codes line by line with regex for target files",
 	"author": "jopemachine",
 	"publisher": "jopemachine",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -33,10 +33,10 @@
 		],
 		"keybindings": [
 			{
-                "command": "Code-replacer.entry",
-                "key": "ctrl+alt+r",
-                "mac": "ctrl+cmd+r"
-            }
+				"command": "Code-replacer.entry",
+				"key": "ctrl+alt+r",
+				"mac": "ctrl+cmd+r"
+			}
 		],
 		"configuration": {
 			"title": "maxLogDisplayCnt",
@@ -74,6 +74,6 @@
 	},
 	"dependencies": {
 		"recursive-readdir": "^2.2.2",
-		"code-replacer": "0.0.212"
+		"code-replacer": "0.0.5"
 	}
 }
