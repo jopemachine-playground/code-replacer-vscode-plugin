@@ -26,11 +26,10 @@ Or download and import vsix file.
 
 **(macos) <kbd>Ctrl</kbd> + <kbd>Command</kbd> + <kbd>R</kbd>**
 
-<img src="./image/ctrlshiftp.png" />
-
 ### 2 - Using <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
 
-Select replace tab.
+<img src="./image/ctrlshiftp.png" />
+
 
 2. Select `csv` in your work directory. 
 
