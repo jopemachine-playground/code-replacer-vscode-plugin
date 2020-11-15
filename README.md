@@ -6,13 +6,13 @@ Replace codes line by line with regex for target files
 
 <img src="./image/demo.gif" />
 
-## Development environment
+## Environment
 
-Tested on `Windows 10`, `macos Catalina`
+Tested on `Windows 10`, `macos`
 
 ## How to install
 
-Search this plugin in vscode's market place.
+Search this plugin in vscode's [marketplace](https://marketplace.visualstudio.com/items?itemName=jopemachine.code-replacer).
 
 Or download and import vsix file.
 

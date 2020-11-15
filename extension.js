@@ -115,33 +115,57 @@ const activate = (context) => {
         process.platform === 'win32'
           ? replaceAll(__dirname, '\\', '\\\\')
           : __dirname
+
       const codeReplacerPath = `${dirName}${pathSep}node_modules${pathSep}code-replacer${pathSep}dist`
       const binPath = `${codeReplacerPath}${pathSep}index.js`
       const envPath = `${codeReplacerPath}${pathSep}${'.env'}`
       const usageLogPath = `${codeReplacerPath}${pathSep}usageLog.json`
       const workspaceName = vscode.workspace.name
       const workspacePath = vscode.workspace.rootPath
-      const csvFiles = await findFiles({
-        dir: workspacePath,
-        ext: 'csv'
-      })
-      const selectedCSV = await getQuickPick({
-        items: [UIString.EXIT, ...csvFiles],
-        placeHolder: 'Select your csv file or type esc to pass csv option.'
+
+      const csvSelectOpt = await getQuickPick({
+        items: [
+          UIString.FETCH_CSVS,
+          UIString.ENTER_CSV_PATH,
+          UIString.NO_CSV,
+          UIString.EXIT
+        ],
+        placeHolder: 'Select a method to handle csv option'
       })
 
-      if (!selectedCSV) {
-        vscode.window.showInformationMessage('csv option is passed.')
-      } else if (selectedCSV === UIString.EXIT) {
-        vscode.window.showInformationMessage(UIString.EXIT)
-        return
+      let selectedCSV
+
+      switch (csvSelectOpt) {
+        case UIString.ENTER_CSV_PATH:
+          selectedCSV = await getInput({ placeHolder: 'Enter csv file path.' })
+          break
+        case UIString.FETCH_CSVS: {
+          const csvFiles = await findFiles({
+            dir: workspacePath,
+            ext: 'csv'
+          })
+          selectedCSV = await getQuickPick({
+            items: [UIString.EXIT, ...csvFiles],
+            placeHolder: 'Select your csv file or type esc to pass csv option.'
+          })
+        }
+          break
+        // selectedCSV is undefined when NO CSV is selected
+        case UIString.NO_CSV:
+          vscode.window.showInformationMessage('csv option is passed.')
+          break
+        case UIString.EXIT:
+          vscode.window.showErrorMessage(UIString.EXIT)
+          return
+        default:
+          break
       }
 
       const flags = {
-        src: currentlyOpenTabfilePath,
-        csv: selectedCSV
+        src: currentlyOpenTabfilePath
       }
 
+      selectedCSV && (flags.csv = selectedCSV)
       flags.template = await handleTemplate({ usageLogPath })
 
       if (!flags.template) {
